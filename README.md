@@ -1,0 +1,2 @@
+# Mini-HPC-Cluster-Implementation-MPI-and-Spark-Based-Distributed-Computing-on-a-Virtual-Environment-
+This project involved building a Mini-HPC cluster using three Ubuntu Server 20.04 virtual machines on  Oracle VirtualBox — one master node and two worker nodes. The nodes were connected over a private  Host-only network (192.168.56.0/24) with passwordless SSH configured for automatic job dispatch from  the master. 
