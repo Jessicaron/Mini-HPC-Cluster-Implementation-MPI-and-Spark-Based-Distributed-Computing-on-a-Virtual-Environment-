@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    networks:
+      - monitor-net
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == master
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    configs:
+      - source: grafana_datasource
+        target: /etc/grafana/provisioning/datasources/datasource.yml
+    networks:
+      - monitor-net
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == master
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - monitor-net
+    deploy:
+      mode: global
+
+configs:
+  prometheus_config:
+    file: ./prometheus.yml
+  grafana_datasource:
+    file: ./grafana-datasource.yml
+
+networks:
+  monitor-net:
+    driver: overlay
